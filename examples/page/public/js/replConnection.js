@@ -20,18 +20,10 @@ function ReplConnection(host, port, options) {
 }
 
 // This is the "eval" for the REPL
-ReplConnection.prototype.evalEvent = function(event) {
-  var message = JSON.parse(event.data);
-  var timestamp = message.timestamp;
-  message.timestamp = new Date(timestamp); // timestamp from the rec'd message
-  if (this.onReceive !== undefined) {
-    this.onReceive(message); // fire the custom callback
-  }
-  var response = { 
-    timestamp: new Date().getTime() // timestamp for the returned message
-  };
+ReplConnection.prototype.eval = function(statement) {
+  response = {}
   try {
-    response.value = eval(message.statement);
+    response.value = eval(statement);
   } catch(err) {
     response.error = err.message;
   }
@@ -84,8 +76,17 @@ ReplConnection.prototype.handleMessageReceived = function(event) {
     console.log("REPL: message received");
     console.log(event);
   }
-  var response = this.evalEvent(event);
-  response.timestamp = new Date();
+  var message = JSON.parse(event.data);
+  // turn the timestamp from the rec'd message into a real date
+  var timestamp = message.timestamp;
+  message.timestamp = new Date(timestamp); 
+  //
+  if (this.onReceive !== undefined) {
+    this.onReceive(message); // fire the custom callback
+  }
+  // prepare the response
+  var response = this.eval(message.statement); // evaluate the statement
+  response.timestamp = new Date().getTime(); // timestamp for the returned message
   var json = JSON.stringify(response);
   if (this.debug) {
     console.log("REPL: replying ");

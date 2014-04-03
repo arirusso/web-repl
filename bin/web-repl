@@ -1,7 +1,16 @@
 #!/usr/bin/env ruby
-$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
+require "optparse"
 require "web-repl"
 
-WebRepl.start(:host => "localhost", :port => 9007)
+ARGV[0]
+
+raise OptionParser::MissingArgument if ARGV[0].nil?
+
+host, port = *ARGV[0].scan(/(\w+):(\d{4,})/)[0]
+
+raise OptionParser::MissingArgument if host.nil? || port.nil?
+
+WebRepl.start(:host => host, :port => port)
 exit 0

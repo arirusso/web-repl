@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>brower-repl demo</title>
+    <meta charset="utf-8">
+    <script src="js/replConnection.js"></script>
+    <script type="text/javascript">
+      window.onload = function() {
+        var repl = new ReplConnection("localhost", 9007, { debug: true, reconnect: true });
+        repl.start();
+      }
+    </script>
+  </head>
+  <body>
+    <h1 id="title">This is the browser-repl demo</h1>
+    <p id="body">blah blah</p>
+  </body>
+</html>

@@ -3,4 +3,4 @@ $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 
 require "browser-repl"
 
-EM.run { BrowserRepl::REPL.new(:host => "localhost", :port => 9007) }
+BrowserRepl.start(:host => "localhost", :port => 9007)

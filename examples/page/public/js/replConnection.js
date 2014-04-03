@@ -84,15 +84,27 @@ ReplConnection.prototype.handleMessageReceived = function(event) {
   if (this.onReceive !== undefined) {
     this.onReceive(message); // fire the custom callback
   }
-  // prepare the response
   var response = this.eval(message.statement); // evaluate the statement
-  response.timestamp = new Date().getTime(); // timestamp for the returned message
-  var json = JSON.stringify(response);
+  response = this.prepareResponse(response)
   if (this.debug) {
     console.log("REPL: replying ");
     console.log(response);
   }
   this.socket.send(json);
+}
+
+ReplConnection.prototype.prepareResponse = function(response) {
+  // prepare the response
+  var json;
+  try {
+    response.timestamp = new Date().getTime(); // timestamp for the returned message
+    var json = JSON.stringify(response);
+  } catch(err) {
+    response.value = null;
+    response.error = err.message;
+    response = this.prepareResponse(response)
+  }
+  return response;
 }
 
 // Initialize the Websocket event handling actions

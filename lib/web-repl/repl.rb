@@ -93,12 +93,10 @@ module WebRepl
 
     def handle_open(handshake, options = {})
       puts "web-repl: Connection open"
-      puts
       @handshake = handshake
     end
 
     def handle_close
-      puts
       puts "web-repl: Connection closed"
       @handshake = nil
     end

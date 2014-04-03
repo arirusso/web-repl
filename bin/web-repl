@@ -4,3 +4,4 @@ $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 require "web-repl"
 
 WebRepl.start(:host => "localhost", :port => 9007)
+exit 0

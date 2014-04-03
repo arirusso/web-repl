@@ -3,6 +3,8 @@ module WebRepl
   # The main REPL object
   class REPL
 
+    attr_reader :thread
+
     # Start a repl connection
     # @param [Hash] config A hash of config options to be passed to EM::WebSocket.run directly
     # @param [Hash] options
@@ -20,6 +22,7 @@ module WebRepl
       @config = config
       @socket = nil
       @messager = nil
+      @buffer = []
       @debug = options[:debug]
     end
 
@@ -40,52 +43,87 @@ module WebRepl
       end      
       statement = line.strip
       case statement
-        when "exit" then exit
-        else
-          evaluate(statement)
+      when "exit" then exit
+      else
+        evaluate(statement)
       end
+    end
+
+    # Wait for a response from the browser
+    def wait_for_response
+      loop until !@buffer.empty?
     end
 
     # Start the Websocket connection (blocking)
     # @param [Hash] options
     # @option options [Boolean] :background Do not wait for input, just run in the bg
-    def start(options = {})
-      EM::WebSocket.run(@config) do |ws|
-        @socket = ws
-        @messager = Messager.new(@socket)
-        configure_event_handling(:background => options[:background])
+    def start(options = {}, &block)
+      @thread = Thread.new do
+        EM::WebSocket.run(@config) do |ws|
+          if @socket.nil?
+            @socket = ws
+            @messager = Messager.new(@socket)
+            configure_event_handling(:background => options[:background], &block)
+          end
+        end
+      end
+      acknowledge_handshake do
+        yield if block_given?
+        gets unless !!options[:background]
+      end
+      @thread.join unless !!options[:background]
+    end
+
+    # Execute a block when a connection is made
+    # @return [TrueClass]
+    def acknowledge_handshake(&block)
+      Thread.new do
+        loop until !@handshake.nil?
+        yield
       end
     end
 
+    # Close the REPL
+    def close
+      @socket.close unless @socket.nil?
+      @thread.kill unless @thread.nil?
+    end
+
     private
+
+    def handle_open(handshake, options = {})
+      puts "web-repl: Connection open"
+      puts
+      @handshake = handshake
+    end
+
+    def handle_close
+      puts
+      puts "web-repl: Connection closed"
+      @handshake = nil
+    end
+
+    def handle_message_received(raw_message, options = {})
+      @messager.in(raw_message) do |message|
+        @buffer.clear
+        @buffer << message
+        keys = { :error => :red, :value => :white }
+        text = nil
+        keys.each do |k,v| 
+          text ||= message[k].to_s.send(v) unless message[k].nil?
+        end
+        puts(text)
+      end
+      gets unless !!options[:background]
+    end
 
     # Configure the Websocket event handling
     # @param [Hash] options
     # @option options [Boolean] :background Do not wait for input, just run in the bg
     def configure_event_handling(options = {})
-      @socket.onopen do |handshake|
-        puts "b-r: Connection open"
-        @active = true
-        gets unless !!options[:background]
-      end
-
-      @socket.onclose do 
-        puts "b-r: Connection closed"
-        @active = false
-      end
-
-      @socket.onmessage do |raw_message|
-        @messager.in(raw_message) do |message|
-          output = if !message[:value].nil?
-            message[:value]
-          elsif !message[:error].nil?
-            message[:error].red
-          end
-          puts(output)
-        end
-        gets unless !!options[:background]
-      end
-
+      @socket.onopen { |handshake| handle_open(handshake) }
+      @socket.onclose { handle_close }
+      @socket.onmessage { |raw_message| handle_message_received(raw_message) }
     end
 
   end

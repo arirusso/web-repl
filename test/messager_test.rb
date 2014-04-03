@@ -1,8 +1,8 @@
 require "helper"
 
-class BrowserRepl::MessagerTest < Test::Unit::TestCase
+class WebRepl::MessagerTest < Test::Unit::TestCase
 
-  include BrowserRepl
+  include WebRepl
 
   context "Messager" do
 

@@ -5,4 +5,4 @@ require 'test/unit'
 require "mocha/test_unit"
 require "shoulda-context"
 
-require "browser-repl"
+require "web-repl"

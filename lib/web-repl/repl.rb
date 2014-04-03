@@ -1,4 +1,4 @@
-module BrowserRepl
+module WebRepl
 
   # The main REPL object
   class REPL
@@ -8,7 +8,7 @@ module BrowserRepl
     # @param [Hash] options
     # @option options [IO, nil] :debug A debug logger or nil if debug is not needed (default: nil)
     # @option options [Boolean] :background Do not wait for input, just run in the bg
-    # @return [BrowserRepl::REPL]
+    # @return [WebRepl::REPL]
     def self.start(config, options = {})
       new(config, options).tap { |repl| repl.start(options) }
     end

@@ -1,4 +1,4 @@
-module BrowserRepl
+module WebRepl
 
   # Handles sending and receiving messages to/from the socket
   class Messager

@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 
-require "browser-repl"
+require "web-repl"
 
-BrowserRepl.start(:host => "localhost", :port => 9007)
+WebRepl.start(:host => "localhost", :port => 9007)

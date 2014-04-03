@@ -6,11 +6,11 @@ require "readline"
 require "socket"
 
 # classes
-require "browser-repl/messager"
-require "browser-repl/patch"
-require "browser-repl/repl"
+require "web-repl/messager"
+require "web-repl/patch"
+require "web-repl/repl"
 
-module BrowserRepl
+module WebRepl
 
   VERSION = "0.1"
 

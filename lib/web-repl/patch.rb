@@ -6,7 +6,7 @@ module EventMachine
     def self.start(options = {}, &block)
       EM.epoll
       if EM.reactor_running?
-        hamdle_start(options, &block)
+        handle_start(options, &block)
       else
         EM.run { handle_start(options, &block) }
       end
@@ -14,7 +14,7 @@ module EventMachine
 
     def self.run(options = {}, &block)
       if EM.reactor_running?
-        hamdle_run(options, &block)
+        handle_run(options, &block)
       else
         EM.run { handle_run(options, &block) }
       end      

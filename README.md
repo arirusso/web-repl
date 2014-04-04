@@ -2,17 +2,15 @@
     
 This is a Javascript [REPL](http://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) that runs in Ruby.  Evaluation is done by a web browser instance.
 
-One use of this is to control the Chrome Developer Console remotely.
+One use of this is to control the Chrome Developer Console remotely as such:
 
 #### Background
 
-I was working on a toy program recently that needed the browser to be in full screen mode, which made using the regular Chrome console very difficult to use.  I came up with this program as an alternative.
+I've been working on a toy project recently that requires browser content to be in fullscreen.  This makes live coding using the regular Chrome JS console more or less impossible.  Web-repl is what I came up with as an alternative.
 
-There are similar tools that run in nodejs for example but since my program uses a Ruby backend anyway, this is convenient for me.
+There are similar tools that run in nodejs and other languages but this is convenient for me because my project uses a Ruby backend anyway.
 
-It communicates over websocket.
-
-There is basically no attention to security here, so please use at your own discretion.  
+Server/client interaction uses JSON over Websocket. There's no extra attention to security here other than what is implicit in Websockets, so please use at your own discretion.  
 
 #### Usage
 
@@ -64,3 +62,4 @@ or with Bundler
 
 Licensed under Apache 2.0, See the file LICENSE
 Copyright (c) 2014 [Ari Russo](http://arirusso.com) 
+

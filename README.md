@@ -12,7 +12,7 @@ I've been working on a toy project recently that requires browser content to be 
 
 There are similar tools that run in nodejs and other languages but this is convenient for me because my project uses a Ruby backend anyway.
 
-Server/client interaction uses JSON over Websocket. There's no extra attention to security here other than what is implicit in Websockets, so please use at your own discretion.  
+Server/client interaction uses JSON over Websocket. There's no extra attention to security here other than what is generally implicit with a Websocket, so please use at your own discretion.  
 
 #### Usage
 
@@ -32,7 +32,7 @@ To enable the browser side of this, include something like this in the head of y
 
 The javascript assets for this project are located in the [/js directory](https://github.com/arirusso/web-repl/tree/master/js).
 
-There is also a full example of a webpage (with [rack](http://rack.github.io/) configuration) in the [/examples/page directory](https://github.com/arirusso/web-repl/tree/master/examples/page)
+There is also a full example of a webpage (with simple [rack](http://rack.github.io/) webserver configuration) in the [/examples/page directory](https://github.com/arirusso/web-repl/tree/master/examples/page)
 
 ###### REPL
 

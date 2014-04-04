@@ -1,12 +1,14 @@
 # web-repl
     
-This is a Javascript [REPL](http://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) that runs in Ruby.  Evaluation is done by a web browser instance.
+A Javascript [REPL](http://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) that runs in Ruby.  Evaluation is done by a web browser instance.
 
-One use of this is to control the Chrome Developer Console remotely as such:
+One use of this is to replace the Chrome Developer Console remotely as such:
+
+![image](http://i.imgur.com/7bdJlNC.png)
 
 #### Background
 
-I've been working on a toy project recently that requires browser content to be in fullscreen.  This makes live coding using the regular Chrome JS console more or less impossible.  Web-repl is what I came up with as an alternative.
+I've been working on a toy project recently that requires browser content to be in fullscreen.  This makes live coding using the regular Chrome JS console more or less impossible.  I came up with web-repl as an alternative.
 
 There are similar tools that run in nodejs and other languages but this is convenient for me because my project uses a Ruby backend anyway.
 
@@ -44,7 +46,7 @@ require "web-repl"
 WebRepl.start(:host => "localhost", :port => 9007)
 ```
 
-You can see an explanation of background usage here.
+You can see an explanation of [background usage here](https://github.com/arirusso/web-repl/blob/master/examples/background.rb).
 
 To use this as a script, run this from the command line.  (The script should install with the gem)
 

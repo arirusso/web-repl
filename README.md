@@ -12,7 +12,7 @@ I've been working on a toy project recently that requires browser content to be 
 
 There are similar tools that run in nodejs and other languages but this is convenient for me because my project uses a Ruby backend anyway.
 
-Server/client interaction uses JSON over Websocket. There's no extra attention to security here other than what is generally implicit with a Websocket, so please use at your own discretion.  
+Under the hood, communication is done with JSON over Websocket. Note that there's no extra attention to security here other than what is generally implicit with a Websocket, so please use at your own discretion.  
 
 #### Usage
 

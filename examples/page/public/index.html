@@ -6,8 +6,9 @@
     <meta charset="utf-8">
     <script src="js/replConnection.js"></script>
     <script type="text/javascript">
+      var repl;
       window.onload = function() {
-        var repl = new ReplConnection("localhost", 9007, { debug: true, reconnect: true });
+        var repl = new ReplConnection("localhost", 9007, { debug: true, reconnect: true});
         repl.start();
       }
     </script>

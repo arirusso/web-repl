@@ -1,12 +1,10 @@
 // A connection to the REPL server using Websocket
 function ReplConnection(host, port, options) {
-  if (options === null) {
-    options = {};
-  }
+  options = (typeof options === "undefined") ? {} : options;
   this.debug = !!options.debug;
   this.reconnect = !!options.reconnect;
   this.retryTime = options.retryTime || 1000;
-  this.onReceive = options.onReceive;
+  this.evalFunction = options.evalFunction;
   this.host = host;
   this.port = port;
   this.active = false;
@@ -21,13 +19,12 @@ function ReplConnection(host, port, options) {
 
 // This is the "eval" for the REPL
 // statement: the statement to evaluate
-// options: eval: a custom eval function
-ReplConnection.prototype.eval = function(statement, options) {
+ReplConnection.prototype.eval = function(statement) {
   options = (typeof options === "undefined") ? {} : options;
-  response = {}
+  response = {};
   try {
-    if (typeof options.eval === "function") {
-      response.value = options.eval(statement);
+    if (typeof this.evalFunction === "function") {
+      response.value = this.evalFunction(statement);
     } else {
       response.value = eval(statement);
     }
@@ -88,9 +85,6 @@ ReplConnection.prototype.handleMessageReceived = function(event) {
   var timestamp = message.timestamp;
   message.timestamp = new Date(timestamp); 
   //
-  if (this.onReceive !== undefined) {
-    this.onReceive(message); // fire the custom callback
-  }
   var response = this.eval(message.statement); // evaluate the statement
   var json = this.prepareJSONResponse(response)
   if (this.debug) {

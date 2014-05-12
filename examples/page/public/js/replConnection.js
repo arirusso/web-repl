@@ -20,10 +20,17 @@ function ReplConnection(host, port, options) {
 }
 
 // This is the "eval" for the REPL
-ReplConnection.prototype.eval = function(statement) {
+// statement: the statement to evaluate
+// options: eval: a custom eval function
+ReplConnection.prototype.eval = function(statement, options) {
+  options = (typeof options === "undefined") ? {} : options;
   response = {}
   try {
-    response.value = eval(statement);
+    if (typeof options.eval === "function") {
+      response.value = options.eval(statement);
+    } else {
+      response.value = eval(statement);
+    }
   } catch(err) {
     response.error = err.message;
   }

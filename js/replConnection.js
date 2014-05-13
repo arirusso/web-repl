@@ -1,12 +1,10 @@
 // A connection to the REPL server using Websocket
 function ReplConnection(host, port, options) {
-  if (options === null) {
-    options = {};
-  }
+  options = (typeof options === "undefined") ? {} : options;
   this.debug = !!options.debug;
   this.reconnect = !!options.reconnect;
   this.retryTime = options.retryTime || 1000;
-  this.onReceive = options.onReceive;
+  this.evalFunction = options.evalFunction;
   this.host = host;
   this.port = port;
   this.active = false;
@@ -21,13 +19,12 @@ function ReplConnection(host, port, options) {
 
 // This is the "eval" for the REPL
 // statement: the statement to evaluate
-// options: eval: a custom eval function
-ReplConnection.prototype.eval = function(statement, options) {
+ReplConnection.prototype.eval = function(statement) {
   options = (typeof options === "undefined") ? {} : options;
-  response = {}
+  var response = {};
   try {
-    if (typeof options.eval === "function") {
-      response.value = options.eval(statement);
+    if (typeof this.evalFunction === "function") {
+      response.value = this.evalFunction(statement);
     } else {
       response.value = eval(statement);
     }
@@ -77,6 +74,13 @@ ReplConnection.prototype.handleSocketClose = function(event) {
   }
 }
 
+// turn the timestamp from the rec'd message into a real date
+ReplConnection.prototype.convertTimestamp = function(message) {
+  var timestamp = message.timestamp;
+  message.timestamp = new Date(timestamp); 
+  return message.timestamp;
+}
+
 // To be run when the Websocket registers an event over the connection.
 ReplConnection.prototype.handleMessageReceived = function(event) {
   if (this.debug) {
@@ -84,34 +88,39 @@ ReplConnection.prototype.handleMessageReceived = function(event) {
     console.log(event);
   }
   var message = JSON.parse(event.data);
-  // turn the timestamp from the rec'd message into a real date
-  var timestamp = message.timestamp;
-  message.timestamp = new Date(timestamp); 
-  //
-  if (this.onReceive !== undefined) {
-    this.onReceive(message); // fire the custom callback
-  }
+  this.convertTimestamp(message);
   var response = this.eval(message.statement); // evaluate the statement
-  var json = this.prepareJSONResponse(response)
-  if (this.debug) {
-    console.log("REPL: replying ");
-    console.log(json);
-  }
-  this.socket.send(json);
+  return this.send(response);
 }
 
-ReplConnection.prototype.prepareJSONResponse = function(response) {
+// Send a message
+ReplConnection.prototype.send = function(message) {
+  var json = this.prepareJSON(message);
+  if (this.debug) {
+    console.log("REPL: sending");
+    console.log(json);
+  }
+  return this.socket.send(json);
+}
+
+// Convert a message to JSON for sending
+ReplConnection.prototype.prepareJSON = function(message) {
   // prepare the response
   var json;
   try {
-    response.timestamp = new Date().getTime(); // timestamp for the returned message
-    json = JSON.stringify(response);
-  } catch(err) {
-    response.value = null;
-    response.error = err.message;
-    json = this.prepareJSONResponse(response)
+    message.timestamp = new Date().getTime(); // timestamp for the returned message
+    json = JSON.stringify(message);
+  } catch(error) {
+    json = this.handleJsonError(message, error);  
   }
   return json;
+}
+
+// Handle an error when converting the message to JSON
+ReplConnection.prototype.handleJsonError = function(message, error) {
+  message.value = null;
+  message.error = err.message;
+  return this.prepareJSONResponse(message);
 }
 
 // Initialize the Websocket event handling actions

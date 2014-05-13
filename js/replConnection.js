@@ -119,7 +119,7 @@ ReplConnection.prototype.prepareJSON = function(message) {
 // Handle an error when converting the message to JSON
 ReplConnection.prototype.handleJsonError = function(message, error) {
   message.value = null;
-  message.error = err.message;
+  message.error = error.message;
   return this.prepareJSONResponse(message);
 }
 

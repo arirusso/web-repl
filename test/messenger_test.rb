@@ -1,14 +1,14 @@
 require "helper"
 
-class WebRepl::MessagerTest < Test::Unit::TestCase
+class WebRepl::MessengerTest < Test::Unit::TestCase
 
   include WebRepl
 
-  context "Messager" do
+  context "Messenger" do
 
     setup do
       @socket = Object.new
-      @messager = Messager.new(@socket)
+      @messager = Messenger.new(@socket)
     end
 
     context "#in" do
@@ -69,7 +69,7 @@ class WebRepl::MessagerTest < Test::Unit::TestCase
       end
 
       should "return nil if fails" do
-        messager = Messager.new(nil)
+        messager = Messenger.new(nil)
         result = messager.out(@message)
         assert_nil result
       end

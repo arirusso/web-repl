@@ -13,7 +13,7 @@ require "web-repl/repl"
 # A Javascript REPL that runs in Ruby. Evaluation is done by a web browser instance.
 module WebRepl
 
-  VERSION = "0.6"
+  VERSION = "0.7"
 
   # Shortcut to REPL.start
   def self.start(*a)

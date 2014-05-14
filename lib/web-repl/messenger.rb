@@ -1,7 +1,7 @@
 module WebRepl
 
   # Handles sending and receiving messages to/from the socket
-  class Messager
+  class Messenger
  
     # @param [EventMachine::WebSocket] socket
     # @param [Hash] options

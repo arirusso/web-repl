@@ -21,7 +21,7 @@ module WebRepl
     def initialize(config, options = {})
       @config = config
       @socket = nil
-      @messager = nil
+      @messenger = nil
       @buffer = []
       @debug = options[:debug]
     end
@@ -30,28 +30,54 @@ module WebRepl
     # @param [Fixnum, String] statement A Javascript statement to be evaluated
     # @return [String, nil] The data that was sent to the browser, or nil if sending could not be completed. 
     def evaluate(statement)
-      @messager.out({ :statement => statement }) unless @messager.nil?
+      @messenger.out({ :statement => statement }) unless @messenger.nil?
     end
 
     # Prompt the Ruby user for input and send that input to the browser for evaluation (blocking)
     # @return [String, nil] The data that was sent to the browser, or nil if sending could not be completed
-    def gets
+    def input(options = {})
       line = Readline.readline('> ', true)
-      return nil if line.nil?
-      if line =~ /^\s*$/ or Readline::HISTORY.to_a[-2] == line
+      if invalid_input?(line)
         Readline::HISTORY.pop
-      end      
-      statement = line.strip
-      case statement
-      when "exit" then exit
+        input(options)
       else
-        evaluate(statement)
+        Readline::HISTORY.pop if repeat_input?(line)
+        statement = line.strip
+        case statement
+        when "exit", "quit" then exit
+        else
+          evaluate(statement)
+          wait_for_response(options)
+        end
       end
     end
 
+    def repeat_input?(line)
+      line == Readline::HISTORY.to_a[-2]
+    end
+
+    def invalid_input?(line)
+      line.nil? || line =~ /^\s*$/
+    end
+
     # Wait for a response from the browser
-    def wait_for_response
-      loop until !@buffer.empty?
+    def wait_for_response(options)
+      until !@buffer.empty? do
+      end
+      @buffer.each { |resp| puts_message(resp) }
+      @buffer.clear
+      input unless !!options[:background]
+    end
+
+    def puts_message(message)
+      keys = { :error => :red, :value => :white }
+      text = nil
+      keys.each do |k,v| 
+        text ||= message[k].to_s.send(v) unless message[k].nil?
+      end
+      text ||= "(void)"
+      puts(text)
+      text
     end
 
     # Start the Websocket connection (blocking)
@@ -62,25 +88,24 @@ module WebRepl
         EM::WebSocket.run(@config) do |ws|
           if @socket.nil?
             @socket = ws
-            @messager = Messager.new(@socket)
+            @messenger = Messenger.new(@socket)
             configure_event_handling(:background => options[:background], &block)
           end
         end
       end
+      Thread.abort_on_exception = true
       acknowledge_handshake do
         yield if block_given?
-        gets unless !!options[:background]
+        input(options) unless !!options[:background]
       end
-      @thread.join unless !!options[:background]
+      #@thread.join unless !!options[:background]
     end
 
     # Execute a block when a connection is made
     # @return [TrueClass]
     def acknowledge_handshake(&block)
-      Thread.new do
-        loop until !@handshake.nil?
-        yield
-      end
+      loop until !@handshake.nil?
+      yield
     end
 
     # Close the REPL
@@ -102,17 +127,9 @@ module WebRepl
     end
 
     def handle_message_received(raw_message, options = {})
-      @messager.in(raw_message) do |message|
-        @buffer.clear
+      @messenger.in(raw_message) do |message|
         @buffer << message
-        keys = { :error => :red, :value => :white }
-        text = nil
-        keys.each do |k,v| 
-          text ||= message[k].to_s.send(v) unless message[k].nil?
-        end
-        puts(text)
       end
-      gets unless !!options[:background]
     end
 
     # Configure the Websocket event handling

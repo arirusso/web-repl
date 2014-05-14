@@ -6,7 +6,7 @@ require "readline"
 require "socket"
 
 # classes
-require "web-repl/messager"
+require "web-repl/messenger"
 require "web-repl/patch"
 require "web-repl/repl"
 

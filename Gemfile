@@ -8,3 +8,4 @@ end
 
 gem "colorize"
 gem "em-websocket"
+gem "rb-readline"

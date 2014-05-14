@@ -120,7 +120,7 @@ ReplConnection.prototype.prepareJSON = function(message) {
 ReplConnection.prototype.handleJsonError = function(message, error) {
   message.value = null;
   message.error = error.message;
-  return this.prepareJSONResponse(message);
+  return this.prepareJSON(message);
 }
 
 // Initialize the Websocket event handling actions

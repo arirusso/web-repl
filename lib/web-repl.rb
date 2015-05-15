@@ -2,7 +2,7 @@
 require "colorize"
 require "em-websocket"
 require "json"
-require "readline"
+require "readline" unless defined?(Readline)
 require "socket"
 
 # classes

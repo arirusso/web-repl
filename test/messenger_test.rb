@@ -2,13 +2,11 @@ require "helper"
 
 class WebRepl::MessengerTest < Minitest::Test
 
-  include WebRepl
-
   context "Messenger" do
 
     setup do
       @socket = Object.new
-      @messager = Messenger.new(@socket)
+      @messager = WebRepl::Messenger.new(@socket)
     end
 
     context "#in" do
@@ -69,7 +67,7 @@ class WebRepl::MessengerTest < Minitest::Test
       end
 
       should "return nil if fails" do
-        messager = Messenger.new(nil)
+        messager = WebRepl::Messenger.new(nil)
         result = messager.out(@message)
         assert_nil result
       end

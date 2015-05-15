@@ -1,5 +1,5 @@
 # web-repl
-    
+
 A Javascript [REPL](http://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) that runs in Ruby.  Evaluation is done by a web browser instance.
 
 One use of this is to replace the Chrome Developer Console remotely as such:
@@ -51,11 +51,11 @@ You can see an explanation of [background usage here](https://github.com/ariruss
 To use this as a script, run this from the command line.  (The script should install with the gem)
 
     web-repl localhost:9007
-    
+
 #### Installation
 
     gem install web-repl
-    
+
 or with Bundler
 
     gem "web-repl"
@@ -63,5 +63,4 @@ or with Bundler
 #### License
 
 Licensed under Apache 2.0, See the file LICENSE
-Copyright (c) 2014 [Ari Russo](http://arirusso.com) 
-
+Copyright (c) 2014-2015 [Ari Russo](http://arirusso.com) 

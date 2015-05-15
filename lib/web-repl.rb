@@ -1,3 +1,9 @@
+# Web-repl
+# Javascript/Web REPL in Ruby
+#
+# (c)2014-2015 Ari Russo
+# Apache 2.0 License
+
 # libs
 require "colorize"
 require "em-websocket"

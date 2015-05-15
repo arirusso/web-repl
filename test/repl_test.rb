@@ -1,6 +1,6 @@
 require "helper"
 
-class WebRepl::ReplTest < Test::Unit::TestCase
+class WebRepl::ReplTest < Minitest::Test
 
   include WebRepl
 
@@ -11,4 +11,3 @@ class WebRepl::ReplTest < Test::Unit::TestCase
   end
 
 end
-
